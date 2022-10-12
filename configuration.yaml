@@ -1,0 +1,61 @@
+sensor:
+  - platform: rest
+    resource: https://ws.dvienergi.com/API/
+    method: POST
+    scan_interval: 60
+    payload: '{"usermail": "YOUR@EMAIL.COM",	"userpassword": "YOURPASSWORD",	"fabnr":YOURFABNR,	"get":{"bestgreen":0,"sensor":1,"relay":0,"timer":0,"userSettings":1}}'
+    name: dviHeatpump
+    json_attributes_path: $.output.sensor
+    value_template: "OK"
+    json_attributes:
+      - Sensor.Date
+      - Centralheating.Forward
+      - Centralheating.Return
+      - Storagetank.Hotwater
+      - Storagetank.Centralheating
+      - LV.Evaporator1
+      - Outsidetemperature
+      - Highpressure
+      - Lowpressure
+      - Powermeter.kW
+      - Powermeter.kWh
+  - platform: template
+    sensors:
+      heatpump_kw:
+        value_template: "{{ state_attr('sensor.dviHeatpump','Powermeter.kW') }}"
+        unit_of_measurement: "kW"
+        device_class: energy
+        #state_class: measurement
+      heatpump_kwh:
+        value_template: "{{ state_attr('sensor.dviHeatpump','Powermeter.kWh') }}"
+        unit_of_measurement: "kWh"
+        device_class: energy
+        #state_class: total_increasing
+      heatpump_outsidetemp:
+        value_template: "{{ state_attr('sensor.dviHeatpump','Outsidetemperature') }}"
+        unit_of_measurement: "°C"
+        icon_template: "mdi:tree"
+      heatpump_heatforward:
+        value_template: "{{ state_attr('sensor.dviHeatpump','Centralheating.Forward') }}"
+        unit_of_measurement: "°C"
+      heatpump_heatreturn:
+        value_template: "{{ state_attr('sensor.dviHeatpump','Centralheating.Return') }}"
+        unit_of_measurement: "°C"
+      heatpump_hotwatertemp:
+        value_template: "{{ state_attr('sensor.dviHeatpump','Storagetank.Hotwater') }}"
+        unit_of_measurement: "°C"
+        icon_template: "mdi:water-pump"
+        
+template:
+  - sensor:
+      - name: "Heatpump Power consumption"
+        unit_of_measurement: "kWh"
+        device_class: energy
+        state_class: measurement
+        state: "{{ state_attr('sensor.dviHeatpump','Powermeter.kW') }}"
+  - sensor:
+      - name: "Heatpump Power meter"
+        unit_of_measurement: "kWh"
+        device_class: energy
+        state_class: total_increasing
+        state: "{{ state_attr('sensor.dviHeatpump','Powermeter.kWh') }}"        
