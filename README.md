@@ -1,5 +1,7 @@
 # DVI_HA
 DVI Energi A/S varmepumpe homeassistant
+Officel API dokumentation fra DVI
+https://ws.dvienergi.com/API/howto.php
 
 Dette er mit første offenlige Homeassistant projekt.
 
